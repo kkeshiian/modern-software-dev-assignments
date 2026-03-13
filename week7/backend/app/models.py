@@ -1,7 +1,6 @@
 from datetime import datetime
-
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, ForeignKey # Tambahkan ForeignKey
+from sqlalchemy.orm import declarative_base, relationship # Tambahkan relationship
 
 Base = declarative_base()
 
@@ -12,6 +11,26 @@ class TimestampMixin:
         DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )
 
+class Category(Base, TimestampMixin):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, nullable=False)
+    
+    # Hubungan balik ke Note
+    notes = relationship("Note", back_populates="category")
+
+# 2. Update Model Note
+class Note(Base, TimestampMixin):
+    __tablename__ = "notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    content = Column(Text, nullable=False)
+    
+    # Tambahkan Foreign Key ke Category
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
+    category = relationship("Category", back_populates="notes")
 
 class Note(Base, TimestampMixin):
     __tablename__ = "notes"
