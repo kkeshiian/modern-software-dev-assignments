@@ -63,6 +63,7 @@ def get_note(note_id: int, db: Session = Depends(get_db)) -> NoteRead:
     note = db.get(Note, note_id)
     if not note:
         raise HTTPException(status_code=404, detail="Note not found")
-    return NoteRead.model_validate(note)
+    return NoteRead.model_validate(note) 
 
 
+ 
